@@ -68,7 +68,7 @@ timer = time.time()
 @client.command(aliases=["version", "ping"])
 @cmd.event(aliases=["version", "ping"])
 async def ver(ctx):
-    text = f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(int(time.time()-timer)lue)}"
+    text = f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(int(time.time()-timer))}"
 
     if isinstance(ctx, objects.Parameters):
         print(f"\n{text}\n")
