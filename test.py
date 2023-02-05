@@ -68,13 +68,13 @@ timer = time.time()
 @client.command(aliases=["version", "ping"])
 @cmd.event(aliases=["version", "ping"])
 async def ver(ctx):
-    value = int(time.time()-timer)
+    text = f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(vaint(time.time()-timer)lue)}"
 
     if isinstance(ctx, objects.Parameters):
-        print(f"\nversion : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(value)}\n")
+        print(f"\n{text}\n")
         return
 
-    await ctx.send(f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(value)}")
+    await ctx.send(text)
 
 
 @client.command(aliases=["help"])
@@ -90,12 +90,13 @@ async def h(ctx):
 @client.command()
 @cmd.event()
 async def reboot(ctx):
+    text = "Restarting bot..."
     if isinstance(ctx, objects.Parameters):
-        print("Restarting bot...")
+        print(text)
     else:
-        await client.change_presence(activity=discord.Game("Shutting down..."), status=discord.Status.dnd)
-        await ctx.send("Restarting bot...")
+        await ctx.send(text)
 
+    await client.change_presence(activity=discord.Game("Shutting down..."), status=discord.Status.dnd)
     os.execv(sys.executable, ["None", os.path.basename(sys.argv[0])])
 
 
