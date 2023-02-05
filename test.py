@@ -106,10 +106,7 @@ async def reboot(ctx):
 
 @tasks.loop(seconds=.5)
 async def run_cmd():
-    try:
-        await cmd.run_task()
-    except Exception as e:
-        raise e
+    await cmd.run_task()
 
 
 def _thread():
