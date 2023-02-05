@@ -9,14 +9,9 @@ import threading
 version = "0.0.1"
 prefix = "-"
 
-bot_token = ""
+with open("bot_token", "r") as f:
+    bot_token = f.readlines()[0].strip()
 
-try:
-    with open("bot_token", "r") as f:
-        bot_token = f.readlines()[0].strip()
-except FileNotFoundError:
-    with open("bot_token", "w") as f:
-        f.write("TOKEN_HERE")
 
 intents = discord.Intents.all()
 
