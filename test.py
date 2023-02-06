@@ -1,12 +1,12 @@
 #  coding: utf-8
 import sys, os, time, discord
 from discord.ext import commands, tasks
-from easy_events import *
+from easy_events import AsyncEvents, Parameters
 import asyncio
 import threading
 
 
-version = "0.0.1"
+version = "0.0.2"
 prefix = "-"
 
 with open("bot_token", "r") as f:
@@ -42,6 +42,11 @@ def convert_time(value):
 
     return message
 
+
+def is_cmd(ctx):
+    return isinstance(ctx, Parameters)
+
+
 # -----------------------------EVENTS--------------------------------
 
 
@@ -70,7 +75,7 @@ timer = time.time()
 async def ver(ctx):
     text = f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(int(time.time()-timer))}"
 
-    if isinstance(ctx, objects.Parameters):
+    if is_cmd(ctx):
         print(f"\n{text}\n")
         return
 
@@ -80,8 +85,8 @@ async def ver(ctx):
 @client.command(aliases=["help"])
 @cmd.event(aliases=["help"])
 async def h(ctx):
-    if isinstance(ctx, objects.Parameters):
-        print(help_msg+"\n")
+    if is_cmd(ctx):
+        print(help_msg)
         return
 
     await ctx.send(help_msg)
@@ -91,7 +96,7 @@ async def h(ctx):
 @cmd.event()
 async def reboot(ctx):
     text = "Restarting bot..."
-    if isinstance(ctx, objects.Parameters):
+    if is_cmd(ctx):
         print(text)
     else:
         await ctx.send(text)
@@ -102,10 +107,11 @@ async def reboot(ctx):
 
 @tasks.loop(seconds=.5)
 async def run_cmd():
+    # execute the commands in the waiting list
     await cmd.run_task()
 
 
-def _thread():
+def _inputs():
     time.sleep(4)
     while True:
         command = input("> ")
@@ -113,10 +119,11 @@ def _thread():
         if not command:
             continue
 
+        # add command to the waiting list
         cmd.trigger(command)
         time.sleep(.5)
 
 
-threading.Thread(target=_thread).start()
+threading.Thread(target=_inputs).start()
 client.run(bot_token , log_handler=None)
 # code by ThePhoenix78 on GitHub
