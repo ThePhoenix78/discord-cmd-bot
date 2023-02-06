@@ -28,6 +28,8 @@ help_msg = """
 
 -ver    : show version info
 -reboot : restart the bot
+-guilds : show the discord server the bot is in
+-message: send a message in a specified channel
 -help   : show this message
 """
 
@@ -73,33 +75,44 @@ timer = time.time()
 @client.command(aliases=["version", "ping"])
 @cmd.event(aliases=["version", "ping"])
 async def ver(ctx):
-    text = f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(int(time.time()-timer))}"
+    await ctx.send(f"version : {version}\nping : {round(client.latency * 1000)}ms :ping_pong:\ntime up : {convert_time(int(time.time()-timer))}")
+
+
+@client.command()
+@cmd.event()
+async def guilds(ctx):
+    server = client.guilds
+    gui = "```"
+
+    for serv in server:
+        gui += f"{serv}\n"
+
+    gui += "```"
+
+    await ctx.send(gui)
+
+
+@client.command(aliases=["msg"])
+@cmd.event(aliases=["msg"])
+async def message(ctx, *, message):
+    channel = client.get_channel("channel_id")
 
     if is_cmd(ctx):
-        print(f"\n{text}\n")
-        return
+        message = " ".join(message)
 
-    await ctx.send(text)
+    await channel.send(message)
 
 
 @client.command(aliases=["help"])
 @cmd.event(aliases=["help"])
 async def h(ctx):
-    if is_cmd(ctx):
-        print(help_msg)
-        return
-
     await ctx.send(help_msg)
 
 
 @client.command()
 @cmd.event()
 async def reboot(ctx):
-    text = "Restarting bot..."
-    if is_cmd(ctx):
-        print(text)
-    else:
-        await ctx.send(text)
+    await ctx.send("Restarting bot...")
 
     await client.change_presence(activity=discord.Game("Shutting down..."), status=discord.Status.dnd)
     os.execv(sys.executable, ["None", os.path.basename(sys.argv[0])])
@@ -111,14 +124,22 @@ async def run_cmd():
     await cmd.run_task()
 
 
+async def send(data):
+    print(data)
+
+
 def _inputs():
     time.sleep(4)
+
     while True:
         command = input("> ")
 
         if not command:
             continue
 
+        command = Parameters(command)
+        command.send = send
+        
         # add command to the waiting list
         cmd.trigger(command)
         time.sleep(.5)
