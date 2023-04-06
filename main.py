@@ -141,7 +141,7 @@ def _inputs():
         command.send = send
         
         # add command to the waiting list
-        cmd.trigger(command)
+        cmd.add_task(command)
         time.sleep(.5)
 
 
