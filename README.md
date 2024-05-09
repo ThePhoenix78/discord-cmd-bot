@@ -3,7 +3,7 @@ A discord bot that can be used in bot cmd and discord at the same time
 
 # Requirement
 
-pip install easy-events>=1.9.5
+pip install easy-events==1.9.5
 
 
 # How does it work?
